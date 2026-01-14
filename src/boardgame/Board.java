@@ -30,13 +30,18 @@ public class Board {
 	}
 	
 	public Piece piece(int row, int column) {
-		return pieces[row][column]; 
+		return pieces[row][column]; //retorna a matriz pieces na linha row/ column
 	}
 	
 	public Piece piece(Position position) {
-		return pieces[position.getRow()][position.getColumn()];
+		return pieces[position.getRow()][position.getColumn()];//sobrecarga retorna a matriz na posicão 
 	}
 	
+	public void placePiece(Piece piece, Position position) {//metodo responsavel por colocar a peça nessa posição do tabuleiro
+		pieces[position.getRow()][position.getColumn()] = piece;
+		piece.position = position;// posição de piece é acessivel diretamente, pois na classe Piece position esta protected(mesmo pacote)
+		
+	}
 	
 	
 	
