@@ -22,6 +22,10 @@ public class Program {
 				System.out.println();
 				System.out.print("Source: ");
 				ChessPosition source = UI.readChessPosition(sc);
+				
+				boolean [][] possibleMoves = chessMatch.possibleMoves(source);// matriz recebe a partida de xadrez com os possiveis movimentos dessa posição de origem
+				UI.clearScreen();//limpa a tela
+				UI.printBoard(chessMatch.getPieces(), possibleMoves);//sobrecarga do metodo de imprimir com os possiveis movimentos
 
 				System.out.println();
 				System.out.print("Target: ");
