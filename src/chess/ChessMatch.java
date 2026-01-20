@@ -8,11 +8,23 @@ import chess.pieces.Rook;
 
 public class ChessMatch {
 
+	private int turn;
+	private Color currentPlayer;
 	private Board board;
 	
 	public ChessMatch() {
 		board = new Board(8, 8);
+		turn = 1;
+		currentPlayer = Color.WHITE;
 		initialSetup();
+	}
+	
+	public int getTurn() {
+		return turn;
+	}
+	
+	public Color getCurrentPlayer() {
+		return currentPlayer;
 	}
 	
 	public ChessPiece[][]getPieces(){
@@ -37,6 +49,7 @@ public class ChessMatch {
 		validateSourcePosition(source);//valida a posicao de origem 
 		validateTargetPosition(source, target);//valida o destino da peça 
 		Piece capturedPiece = makeMove(source, target);// recebe a operaçao que realiza o movimento da peça
+		nextTurn();
 		return (ChessPiece)capturedPiece;//peça capturada recebendo um downcast para ChessPiece
 	}
 	
@@ -51,6 +64,9 @@ public class ChessMatch {
 		if(!board.thereIsAPiece(position)) {//testa se existe uma peça na posição
 			throw new ChessException("There is no piece on source position");
 		}
+		if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {//testa se o jogador esta tentando jogar com a peça do adversario 
+			throw new ChessException("The chosen piece is not yours");
+		}
 		if(!board.piece(position).isThereAnyPossibleMove()) {//testa se existe algum movimento possivel da peça
 			throw new ChessException("There is no moves for the chosen piece");
 		}
@@ -62,6 +78,10 @@ public class ChessMatch {
 		}
 	}
 	
+	private void nextTurn() {
+		turn++;
+		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE; // se o jogador for igual a branco então agora ele vai ser o preto caso contrario vai ser o branco
+	}
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) { // operção de colocar peça usando as cordenadas do xadrez 
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());// converte para posição da matriz
