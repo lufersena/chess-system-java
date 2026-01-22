@@ -18,7 +18,7 @@ public class Program {
 		Scanner sc = new Scanner(System.in);
 		List<ChessPiece>captured = new ArrayList<>();
 
-		while (true) {
+		while (!chessMatch.getCheckMate()) {//enquanto a partida nao estiver em check mate a pardida continua
 			try {
 				UI.clearScreen();
 				UI.printMatch(chessMatch, captured);
@@ -47,6 +47,8 @@ public class Program {
 			}
 
 		}
+		UI.clearScreen();
+		UI.printMatch(chessMatch, captured);
 	}
 
 }
