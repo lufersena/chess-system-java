@@ -61,10 +61,6 @@ public class Rook extends ChessPiece{
 				if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {// se tiver uma posiçao p e uma peça adversaria tambem recebe true
 					mat[p.getRow()][p.getColumn()] = true;
 				}
-				
-		
-		
-		
 		
 		return mat;
 	}
