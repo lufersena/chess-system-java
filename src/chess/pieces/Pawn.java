@@ -71,7 +71,7 @@ public class Pawn extends ChessPiece{
 			if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {//se a posição existir e tiver uma peça adversaria
 				mat[p.getRow()][p.getColumn()] = true;
 			}
-			p.setValues(position.getRow()+1, position.getColumn()+1);// ve a casa suldeste do peão
+			p.setValues(position.getRow()+1, position.getColumn()-1);// ve a casa suldeste do peão
 			if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {//se a posição existir e tiver uma peça adversaria
 				mat[p.getRow()][p.getColumn()] = true;
 			}

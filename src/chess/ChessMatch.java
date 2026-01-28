@@ -1,5 +1,6 @@
 package chess;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ public class ChessMatch {
 	private boolean check;
 	private boolean checkMate;
 	private ChessPiece enPassantVulnerable;
+	private ChessPiece promoted;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -51,6 +53,10 @@ public class ChessMatch {
 	
 	public ChessPiece getEnPassantVulnerable(){
 		return enPassantVulnerable;
+	}
+	
+	public ChessPiece getPromoted() {
+		return promoted;
 	}
 	
 	public ChessPiece[][]getPieces(){
@@ -83,6 +89,16 @@ public class ChessMatch {
 		
 		ChessPiece movedPiece = (ChessPiece)board.piece(target);//pega a peça que se moveu para o destino e isola
 		
+		//movimento especial promoção
+		promoted = null;// garante que é uma nova promoção
+		if(movedPiece instanceof Pawn) {
+			if((movedPiece.getColor() == Color.WHITE && target.getRow() == 0) ||movedPiece.getColor() == Color.BLACK && target.getRow() == 7){// se algum peão chegar na linha final do tabuleiro
+				promoted = (ChessPiece)board.piece(target);// promoted recebe o peão na posição de destino
+				promoted = replacePromotedPiece ("Q"); 
+			}
+		}
+		
+		
 		check = (testCheck(opponent(currentPlayer))) ? true : false;//atributo check recebe true se o testCheck do oponente do jogador atual for true  se não false
 		
 		if(testCheckMate(opponent(currentPlayer))) {//se o oponente da peça que mexeu ficou em check mate
@@ -100,6 +116,33 @@ public class ChessMatch {
 		}
 		
 		return (ChessPiece)capturedPiece;//peça capturada recebendo um downcast para ChessPiece
+	}
+	
+	//movimento especial promoção
+	public ChessPiece replacePromotedPiece(String type) {//metodo que recebe uma letra (type) e promove o peão
+		if(promoted == null) {//verifica se existe uma peça para promoção
+			throw new IllegalStateException("There is no piece to be promoted");
+		}
+		if(!type.equals("B") && !type.equals("N") && !type.equals("R") && !type.equals("Q")) {//peças validas para promoçao do peão
+			throw new InvalidParameterException("Invalid type for promotion");
+		}
+		
+		Position pos = promoted.getChessPosition().toPosition();// pega a posiçao da peça
+		Piece p = board.removePiece(pos);//remove a peça e guarda na variavel
+		piecesOnTheBoard.remove(p);//remove da lista de peças no tabuleiro
+		
+		ChessPiece newPiece = newPiece(type, promoted.getColor());//nova peça recebe a letra e a cor da peça promovida
+		board.placePiece(newPiece, pos);//coloca a peça no tabuleiro
+		piecesOnTheBoard.add(newPiece);//adiciona na lista de peças do tabuleiro a nova peça
+		
+		return newPiece;
+	}
+	
+	private ChessPiece newPiece(String type, Color color) {//metodo auxiliar para trocar(instanciar) a peça promovida
+		if(type.equals("B")) return new Bishop(board, color);
+		if(type.equals("N")) return new Knight(board, color);
+		if(type.equals("Q")) return new Queen(board, color);
+		return new Rook(board, color);
 	}
 	
 	private Piece makeMove(Position source, Position target) {// metodo que faz o movimento da peça 
@@ -175,7 +218,7 @@ public class ChessMatch {
 		Position sourceT = new Position(source.getRow(), source.getColumn()-4);//pega a posiçao de origem da torre
 		Position targetT = new Position(source.getRow(), source.getColumn()-1);//pega a posiçao de destino da torre
 		ChessPiece rook = (ChessPiece)board.removePiece(targetT);//remove a torre do destio
-		board.placePiece(rook, targetT);//e coloca na origem
+		board.placePiece(rook, sourceT);//e coloca na origem
 		rook.decreaseMoveCount();//decrementa a contagem de movimentos
 							
 		}
